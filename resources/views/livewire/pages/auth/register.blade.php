@@ -16,7 +16,7 @@ state([
     'name' => '',
     'email' => '',
     'password' => '',
-    'password_confirmation' => ''
+    'password_confirmation' => '',
 ]);
 
 rules([
@@ -34,7 +34,7 @@ $register = function () {
 
     Auth::login($user);
 
-    $this->redirect(route('dashboard', absolute: false), navigate: true);
+    $this->redirectIntended(default: route('workspace', 'general', absolute: false), navigate: true);
 };
 
 ?>
