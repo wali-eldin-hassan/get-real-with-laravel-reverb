@@ -18,7 +18,7 @@ state('token')->locked();
 state([
     'email' => fn () => request()->string('email')->value(),
     'password' => '',
-    'password_confirmation' => ''
+    'password_confirmation' => '',
 ]);
 
 rules([

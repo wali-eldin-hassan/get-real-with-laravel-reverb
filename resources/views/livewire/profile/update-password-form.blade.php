@@ -11,7 +11,7 @@ use function Livewire\Volt\state;
 state([
     'current_password' => '',
     'password' => '',
-    'password_confirmation' => ''
+    'password_confirmation' => '',
 ]);
 
 rules([

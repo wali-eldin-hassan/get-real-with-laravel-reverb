@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -10,7 +9,7 @@ use function Livewire\Volt\state;
 
 state([
     'name' => fn () => auth()->user()->name,
-    'email' => fn () => auth()->user()->email
+    'email' => fn () => auth()->user()->email,
 ]);
 
 $updateProfileInformation = function () {
