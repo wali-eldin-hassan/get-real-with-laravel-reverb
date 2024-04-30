@@ -81,7 +81,6 @@ class Channel extends Model
         $message = $this->messages()->create([
             'user_id' => $user->id,
             'content' => $message,
-            'type' => 'message',
             'sent_at' => now(),
         ]);
 
