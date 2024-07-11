@@ -7,15 +7,17 @@ use function Livewire\Volt\mount;
 use function Livewire\Volt\state;
 use function Livewire\Volt\title;
 
-state(['channel', 'channels', 'users', 'subscribers']);
+state(['channel', 'channels', 'users', 'subscribers', 'name']);
 
 mount(function (Channel $channel) {
-    $this->channels = Channel::all();
+    $this->channels = Channel::all()->toArray();
     $this->users = User::orderBy('name')->get();
     $this->subscribers = $this->channel->getSubscribers();
 });
 
 title(fn () => "#{$this->channel->name}");
+
+$createChannel = fn (string $name) => Channel::create(['name' => $name]);
 
 ?>
 
@@ -48,32 +50,57 @@ title(fn () => "#{$this->channel->name}");
 
             <ul
                 class="flex flex-col gap-y-2"
-                x-data="{ open: true }"
+                x-data="{ open: true, openChannelForm: false }"
             >
-                <li>
-                    <button
-                        @click="open = !open"
-                        class="flex w-full items-center gap-x-2 rounded-md px-4 py-1 hover:bg-white/30"
-                    >
-                        <x-icons.chevron-down class="h-3 w-3 text-gray-700" />
+                <li class="flex flex-col">
+                    <div class="flex">
+                        <button
+                            @click="open = !open"
+                            class="flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-white/30"
+                        >
+                            <x-icons.chevron-down class="h-3 w-3 text-gray-700" />
+                        </button>
 
-                        Channels
-                    </button>
-                </li>
+                        <button class="flex items-center justify-between w-full">
+                            Channels
+
+                            <x-icons.plus
+                                x-show="!openChannelForm"
+                                class="h-5 w-5 text-gray-700"
+                                @click="openChannelForm = !openChannelForm" 
+                            />
+
+                            <x-icons.minus
+                                x-show="openChannelForm"
+                                class="h-5 w-5 text-gray-700"
+                                @click="openChannelForm = !openChannelForm" 
+                            />
+                        </button>
+                    </div>
+
+                    <input
+                        x-show="openChannelForm"
+                        wire:model="name"
+                        type="text"
+                        class="w-full rounded-md border border-gray-300 px-3 py-1"
+                        placeholder="general"
+                        @keyup.enter="openChannelForm = false; $wire.createChannel($event.target.value)"
+                    />
+                </li>   
 
                 <li>
                     <ul x-cloak x-show="open">
                         @foreach ($channels as $sidebar)
                             <li>
                                 <a
-                                    href="{{ route("workspace", $sidebar) }}"
-                                    class="{{ $channel->name === $sidebar->name ? "bg-fuchsia-900 text-white" : "" }} flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-fuchsia-900 hover:text-white"
+                                    href="{{ route("workspace", $sidebar['id']) }}"
+                                    class="{{ $channel->name === $sidebar['name'] ? "bg-fuchsia-900 text-white" : "" }} flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-fuchsia-900 hover:text-white"
                                 >
                                     <x-icons.hashtag
                                         class="text:inherit h-4 w-4"
                                     />
 
-                                    {{ $sidebar->name }}
+                                    {{ $sidebar['name'] }}
                                 </a>
                             </li>
                         @endforeach
