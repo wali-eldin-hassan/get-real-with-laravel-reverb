@@ -50,7 +50,7 @@ $createChannel = fn (string $name) => Channel::create(['name' => $name]);
 
             <ul
                 class="flex flex-col gap-y-2"
-                x-data="{ open: true, openChannelForm: false }"
+                x-data="channels"
             >
                 <li class="flex flex-col">
                     <div class="flex">
@@ -90,20 +90,21 @@ $createChannel = fn (string $name) => Channel::create(['name' => $name]);
 
                 <li>
                     <ul x-cloak x-show="open">
-                        @foreach ($channels as $sidebar)
+                        <template x-for="channel in $wire.channels">
                             <li>
                                 <a
-                                    href="{{ route("workspace", $sidebar['id']) }}"
-                                    class="{{ $channel->name === $sidebar['name'] ? "bg-fuchsia-900 text-white" : "" }} flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-fuchsia-900 hover:text-white"
+                                    :href="`/${channel.name}`"
+                                    class="flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-fuchsia-900 hover:text-white"
+                                    :class="{ 'bg-fuchsia-900 text-white': channel.name === $wire.channel.name }"
                                 >
                                     <x-icons.hashtag
                                         class="text:inherit h-4 w-4"
                                     />
 
-                                    {{ $sidebar['name'] }}
+                                    <span x-text="channel.name"></span>
                                 </a>
                             </li>
-                        @endforeach
+                        </template>
                     </ul>
                 </li>
             </ul>
@@ -153,3 +154,15 @@ $createChannel = fn (string $name) => Channel::create(['name' => $name]);
         <livewire:channel :channel="$channel" />
     </div>
 </div>
+
+@script
+<script>
+Alpine.data('channels', () => {
+    return {
+        open: true,
+
+        openChannelForm: false,
+    }
+});
+</script>
+@endscript
