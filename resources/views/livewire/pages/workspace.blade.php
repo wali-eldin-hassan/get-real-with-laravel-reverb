@@ -95,7 +95,7 @@ $createChannel = fn (string $name) => Channel::create(['name' => $name]);
                                 <a
                                     :href="`/${channel.name}`"
                                     class="flex items-center gap-x-2 rounded-md px-4 py-1 hover:bg-fuchsia-900 hover:text-white"
-                                    :class="{ 'bg-fuchsia-900 text-white': channel.name === $wire.channel.name }"
+                                    :class="{ 'bg-fuchsia-900 text-white': channel.name === '{{ $channel->name }}' }"
                                 >
                                     <x-icons.hashtag
                                         class="text:inherit h-4 w-4"
