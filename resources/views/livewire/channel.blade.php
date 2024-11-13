@@ -10,9 +10,9 @@ mount(function ($channel) {
     $this->subscribed = $this->channel->isSubscribed(auth()->user());
 });
 
-$join = fn () => ($this->subscribed = $this->channel->subscribe(auth()->user()));
+$join = fn() => ($this->subscribed = $this->channel->subscribe(auth()->user()));
 
-$send = fn (string $message) => $this->channel->send(auth()->user(), $message);
+$send = fn(string $message) => $this->channel->send(auth()->user(), $message);
 
 ?>
 
@@ -67,13 +67,14 @@ $send = fn (string $message) => $this->channel->send(auth()->user(), $message);
     >
         @if ($subscribed)
             <div class="flex w-full flex-col gap-y-1">
-                <x-editor channel="{{ $channel->name }}" />
+                <x-editor channel="{{ $channel->name }}"/>
 
                 <!-- Typing Indicator -->
                 <span class="block shrink-0 text-xs text-gray-500 after:content-['\200b']"></span>
             </div>
         @else
-            <div class="flex flex flex-grow flex-col items-center justify-center gap-y-4 rounded-md border bg-gray-100 p-6">
+            <div
+                class="flex flex flex-grow flex-col items-center justify-center gap-y-4 rounded-md border bg-gray-100 p-6">
                 <span class="text-lg font-bold">
                     #{{ $channel->name }}
                 </span>
@@ -92,29 +93,33 @@ $send = fn (string $message) => $this->channel->send(auth()->user(), $message);
 
 @script
 <script>
-Alpine.data('channel', () => {
-    return {
-        isTyping: false,
+    Alpine.data('channel', () => {
+        return {
+            isTyping: false,
 
-        usersTyping: [],
+            usersTyping: [],
 
-        channel: null,
+            channel: null,
 
-        init() {
-            this.scrollPosition()
-        },
+            init() {
+                this.scrollPosition()
+                this.channel = Echo.channel('channels.{{ $channel->id }}')
+                this.channel.listen('MessageSent', (event) => {
+                    this.$wire.messages.push(event.message)
+                })
+            },
 
-        send(message) {
-            this.$wire.send(message)
-        },
+            send(message) {
+                this.$wire.send(message)
+            },
 
-        scrollPosition() {
-            this.$watch('$wire.messages', () => {
-                this.$refs.messages.scrollTop =
-                    this.$refs.messages.scrollHeight;
-            });
-        },
-    }
-})
+            scrollPosition() {
+                this.$watch('$wire.messages', () => {
+                    this.$refs.messages.scrollTop =
+                        this.$refs.messages.scrollHeight;
+                });
+            },
+        }
+    })
 </script>
 @endscript
